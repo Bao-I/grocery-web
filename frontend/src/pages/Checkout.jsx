@@ -1,23 +1,89 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { ChevronRight, CreditCard, Truck, Receipt } from "lucide-react";
 
 const Checkout = () => {
-  const { cartItems, totalPrice } = useCart();
+  const { cartItems, totalPrice, clearCart } = useCart();
+  const navigate = useNavigate();
+
+  // 1. Lấy thông tin user từ localStorage nếu đã đăng nhập
+  const savedUser = JSON.parse(localStorage.getItem("user") || "{}");
+
+  // 2. State quản lý Form
+  const [formData, setFormData] = useState({
+    fullName: savedUser.fullName || "",
+    phone: savedUser.phone || "",
+    email: savedUser.email || "",
+    address: "",
+    note: "",
+    paymentMethod: "COD",
+  });
+
+  // 3. Xử lý thay đổi input
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // 4. Hàm xử lý đặt hàng
+  const handleOrder = async () => {
+    // Kiểm tra dữ liệu
+    if (!formData.fullName || !formData.phone || !formData.address) {
+      alert("Vui lòng điền đầy đủ các thông tin có dấu (*)");
+      return;
+    }
+
+    if (cartItems.length === 0) {
+      alert("Giỏ hàng trống, không thể đặt hàng!");
+      return;
+    }
+
+    // Chuẩn bị dữ liệu gửi lên Backend
+    const orderData = {
+      userId: savedUser.id || savedUser._id || null,
+      customerInfo: {
+        fullName: formData.fullName,
+        phone: formData.phone,
+        email: formData.email,
+        address: formData.address,
+        note: formData.note,
+      },
+      items: cartItems,
+      totalPrice: totalPrice,
+      paymentMethod: formData.paymentMethod,
+    };
+
+    try {
+      const response = await fetch("http://localhost:5175/api/orders/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(orderData),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert("Đặt hàng thành công! Cảm ơn bạn đã ủng hộ Hồng Lam.");
+        if (clearCart) clearCart(); // Xóa giỏ hàng nếu có hàm clear
+        navigate("/");
+        window.location.reload(); // Reload để reset giỏ hàng hoàn toàn
+      } else {
+        alert("Có lỗi: " + data.message);
+      }
+    } catch (error) {
+      alert("Lỗi kết nối đến Server!");
+    }
+  };
 
   return (
     <div className="bg-[#f7f4ef] min-h-screen pb-20 font-sans text-[#3e2714]">
       <div className="mx-auto max-w-[1200px] px-4 pt-4">
-        {/* TIÊU ĐỀ TRANG THEO PHONG CÁCH HỒNG LAM */}
         <div className="flex justify-center mb-12">
           <SectionHeading title="Thanh toán đơn hàng" />
         </div>
 
         <div className="flex flex-col lg:flex-row gap-10">
-          {/* CỘT TRÁI: THÔNG TIN NHẬN HÀNG & THANH TOÁN */}
           <div className="flex-[2] space-y-8">
-            {/* Khối Thông tin giao hàng */}
             <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-200 relative overflow-hidden">
               <div className="flex items-center gap-2 mb-6 text-[#9d0b0f]">
                 <Truck size={24} />
@@ -33,6 +99,9 @@ const Checkout = () => {
                   </label>
                   <input
                     type="text"
+                    name="fullName"
+                    value={formData.fullName}
+                    onChange={handleChange}
                     placeholder="Nhập họ và tên"
                     className="w-full border border-gray-200 p-3 rounded-lg outline-none focus:border-[#faa519] transition-all bg-gray-50/50"
                   />
@@ -43,6 +112,9 @@ const Checkout = () => {
                   </label>
                   <input
                     type="text"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
                     placeholder="Nhập số điện thoại"
                     className="w-full border border-gray-200 p-3 rounded-lg outline-none focus:border-[#faa519] transition-all bg-gray-50/50"
                   />
@@ -53,6 +125,9 @@ const Checkout = () => {
                   </label>
                   <input
                     type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
                     placeholder="email@example.com"
                     className="w-full border border-gray-200 p-3 rounded-lg outline-none focus:border-[#faa519] transition-all bg-gray-50/50"
                   />
@@ -62,6 +137,9 @@ const Checkout = () => {
                     Địa chỉ chi tiết <span className="text-red-500">*</span>
                   </label>
                   <textarea
+                    name="address"
+                    value={formData.address}
+                    onChange={handleChange}
                     placeholder="Số nhà, tên đường, phường/xã..."
                     className="w-full border border-gray-200 p-3 rounded-lg h-24 outline-none focus:border-[#faa519] transition-all bg-gray-50/50"
                   ></textarea>
@@ -72,6 +150,9 @@ const Checkout = () => {
                   </label>
                   <input
                     type="text"
+                    name="note"
+                    value={formData.note}
+                    onChange={handleChange}
                     placeholder="Ví dụ: Giao giờ hành chính..."
                     className="w-full border border-gray-200 p-3 rounded-lg outline-none focus:border-[#faa519] transition-all bg-gray-50/50"
                   />
@@ -92,9 +173,11 @@ const Checkout = () => {
                 <label className="flex items-center gap-4 p-4 border-2 border-gray-100 rounded-xl cursor-pointer hover:border-[#faa519] has-[:checked]:border-[#faa519] has-[:checked]:bg-orange-50/30 transition-all">
                   <input
                     type="radio"
-                    name="pay"
+                    name="paymentMethod"
+                    value="COD"
+                    checked={formData.paymentMethod === "COD"}
+                    onChange={handleChange}
                     className="w-5 h-5 accent-[#9d0b0f]"
-                    defaultChecked
                   />
                   <div>
                     <p className="font-bold text-gray-800">
@@ -110,7 +193,10 @@ const Checkout = () => {
                 <label className="flex items-center gap-4 p-4 border-2 border-gray-100 rounded-xl cursor-pointer hover:border-[#faa519] has-[:checked]:border-[#faa519] has-[:checked]:bg-orange-50/30 transition-all">
                   <input
                     type="radio"
-                    name="pay"
+                    name="paymentMethod"
+                    value="Bank Transfer"
+                    checked={formData.paymentMethod === "Bank Transfer"}
+                    onChange={handleChange}
                     className="w-5 h-5 accent-[#9d0b0f]"
                   />
                   <div>
@@ -187,7 +273,10 @@ const Checkout = () => {
                   </span>
                 </div>
 
-                <button className="w-full bg-[#9d0b0f] text-white py-4 rounded-full font-bold text-lg hover:bg-red-800 shadow-lg shadow-red-100 transition-all active:scale-95 flex items-center justify-center gap-2">
+                <button
+                  onClick={handleOrder}
+                  className="w-full bg-[#9d0b0f] text-white py-4 rounded-full font-bold text-lg hover:bg-red-800 shadow-lg shadow-red-100 transition-all active:scale-95 flex items-center justify-center gap-2"
+                >
                   XÁC NHẬN ĐẶT HÀNG
                 </button>
 
@@ -215,7 +304,6 @@ const Checkout = () => {
   );
 };
 
-// Component Tiêu đề phụ dùng lại logic ruy-băng
 const SectionHeading = ({ title }) => (
   <div className="relative z-[1] flex justify-center items-center">
     <div className="absolute top-1/2 left-[-100px] right-[-100px] h-[1px] bg-[#9d0b0f] z-[1]"></div>

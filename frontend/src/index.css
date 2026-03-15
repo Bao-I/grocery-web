@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 @import url("https://fonts.googleapis.com/css2?family=Momo+Trust+Sans:wght@200..800&display=swap");
 @import "tailwindcss";
 
@@ -32,18 +33,27 @@
   }
 }
 
+=======
+@import "tailwindcss";
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
 @keyframes zoomIn {
   from {
     opacity: 0;
     transform: scale(0.95);
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
   to {
     opacity: 1;
     transform: scale(1);
   }
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
 .animate-zoomIn {
   animation: zoomIn 0.25s ease-out;
 }
@@ -52,11 +62,15 @@
 .custom-scrollbar::-webkit-scrollbar {
   width: 5px;
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: #800a0d;
   border-radius: 10px;
 }
+<<<<<<< HEAD
 
 .custom-scrollbar::-webkit-scrollbar-track {
   background: transparent;
@@ -90,3 +104,8 @@ body {
   background-color: #fdfaf5;
   min-height: 100vh;
 }
+=======
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde

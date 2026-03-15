@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+<<<<<<< HEAD
 
 const productSchema = new mongoose.Schema(
     {
@@ -64,3 +65,26 @@ productSchema.index({
 });
 
 module.exports = mongoose.model("Product", productSchema);
+=======
+const ProductSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true },
+    slogan: { type: String },
+    category: { type: String, required: true },
+
+    variants: [
+      {
+        label: String,
+        price: Number,
+        stock: Number,
+      },
+    ],
+
+    images: [String],
+    description: { type: String },
+  },
+  { timestamps: true },
+);
+
+module.exports = mongoose.model("Product", ProductSchema);
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde

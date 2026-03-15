@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+<<<<<<< HEAD
 const productController = require("../controllers/product.controller");
 const { verifyToken: authMiddleware } = require("../middlewares/authMiddleware");
 const adminMiddleware = require("../middlewares/admin.middleware");
@@ -25,5 +26,12 @@ router.post(
     upload.single("file"),
     productController.importExcel
 );
+=======
+const productController = require("../controllers/productController");
+
+router.get("/", productController.getAllProducts);
+router.post("/", productController.createProduct);
+router.delete("/:id", productController.deleteProduct);
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
 
 module.exports = router;

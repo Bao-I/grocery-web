@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+<<<<<<< HEAD
 const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
@@ -21,6 +22,10 @@ const transporter = nodemailer.createTransport({
   greetingTimeout: 10000,
   socketTimeout: 10000,
 });
+=======
+const Customer = require("../models/Customer");
+const User = require("../models/User");
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
 
 exports.login = async (req, res) => {
   const { email, password } = req.body;
@@ -33,7 +38,11 @@ exports.login = async (req, res) => {
   }
 
   try {
+<<<<<<< HEAD
     const user = await User.findOne({ email });
+=======
+    const user = await Customer.findOne({ email });
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
 
     if (!user) {
       return res.status(401).json({
@@ -42,11 +51,15 @@ exports.login = async (req, res) => {
       });
     }
 
+<<<<<<< HEAD
     // Kiểm tra mật khẩu (hỗ trợ cả mật khẩu đã hash và chưa hash cho account cũ)
     const isMatch = await bcrypt
       .compare(password, user.password)
       .catch(() => false);
     if (!isMatch && String(password) !== String(user.password)) {
+=======
+    if (String(password) !== String(user.password)) {
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
       return res.status(401).json({
         success: false,
         message: "Email hoặc mật khẩu không đúng!",
@@ -67,7 +80,10 @@ exports.login = async (req, res) => {
     );
 
     console.log("✅ Đăng nhập thành công cho:", user.fullName);
+<<<<<<< HEAD
     await activityController.createLog(user._id, "Đăng nhập", "Người dùng đã đăng nhập vào hệ thống", req);
+=======
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
 
     const { password: _, ...userInfo } = user.toObject();
     return res.status(200).json({
@@ -87,7 +103,11 @@ exports.login = async (req, res) => {
 };
 
 exports.register = async (req, res) => {
+<<<<<<< HEAD
   const { fullName, email, password, phone, gender, birthday } = req.body;
+=======
+  const { fullName, email, password, phone } = req.body;
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
 
   if (!fullName || !email || !password) {
     return res.status(400).json({
@@ -97,7 +117,11 @@ exports.register = async (req, res) => {
   }
 
   try {
+<<<<<<< HEAD
     const existing = await User.findOne({ email });
+=======
+    const existing = await Customer.findOne({ email });
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
     if (existing) {
       return res.status(409).json({
         success: false,
@@ -105,6 +129,7 @@ exports.register = async (req, res) => {
       });
     }
 
+<<<<<<< HEAD
     if (password.length < 6) {
       return res.status(400).json({
         success: false,
@@ -130,6 +155,9 @@ exports.register = async (req, res) => {
       gender,
       birthday,
     });
+=======
+    const newUser = await Customer.create({ fullName, email, password, phone });
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
 
     return res.status(201).json({
       success: true,
@@ -150,6 +178,7 @@ exports.register = async (req, res) => {
   }
 };
 
+<<<<<<< HEAD
 exports.googleLogin = async (req, res) => {
   const { token } = req.body;
 
@@ -333,6 +362,13 @@ exports.updateProfile = async (req, res) => {
   if (birthday) updateData.birthday = birthday;
 
   if (Object.keys(updateData).length === 0) {
+=======
+exports.updateProfile = async (req, res) => {
+  const userId = req.user.id;
+  const { fullName, phone } = req.body;
+
+  if (!fullName && !phone) {
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
     return res.status(400).json({
       success: false,
       message: "Vui lòng cung cấp ít nhất một thông tin cần cập nhật",
@@ -340,10 +376,18 @@ exports.updateProfile = async (req, res) => {
   }
 
   try {
+<<<<<<< HEAD
     const updated = await User.findByIdAndUpdate(userId, updateData, {
       new: true,
       select: "-password",
     });
+=======
+    const updated = await Customer.findByIdAndUpdate(
+      userId,
+      { ...(fullName && { fullName }), ...(phone && { phone }) },
+      { new: true, select: "-password" },
+    );
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
 
     if (!updated) {
       return res
@@ -351,8 +395,11 @@ exports.updateProfile = async (req, res) => {
         .json({ success: false, message: "Không tìm thấy tài khoản!" });
     }
 
+<<<<<<< HEAD
     await activityController.createLog(userId, "Cập nhật hồ sơ", "Thông tin cá nhân đã được thay đổi", req);
 
+=======
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
     return res.status(200).json({
       success: true,
       message: "Cập nhật thông tin thành công!",
@@ -372,7 +419,11 @@ exports.getProfile = async (req, res) => {
   const userId = req.user.id;
 
   try {
+<<<<<<< HEAD
     const user = await User.findById(userId).select("-password");
+=======
+    const user = await Customer.findById(userId).select("-password");
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
 
     if (!user) {
       return res
@@ -401,6 +452,7 @@ exports.forgotPassword = async (req, res) => {
   }
 
   try {
+<<<<<<< HEAD
     const user = await User.findOne({ email });
 
     if (!user) {
@@ -590,6 +642,25 @@ exports.resetPassword = async (req, res) => {
     });
   } catch (error) {
     console.error("❌ LỖI RESET PASSWORD:", error.message);
+=======
+    const user = await Customer.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "Email không tồn tại trong hệ thống!",
+      });
+    }
+
+    // TODO: Tích hợp gửi email thực tế (nodemailer, SendGrid...)
+    return res.status(200).json({
+      success: true,
+      message:
+        "Yêu cầu đặt lại mật khẩu đã được ghi nhận, vui lòng kiểm tra email!",
+    });
+  } catch (error) {
+    console.error("❌ LỖI RESET MẬT KHẨU:", error.message);
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
     return res.status(500).json({
       success: false,
       message: "Đã có lỗi xảy ra tại Server",
@@ -602,7 +673,11 @@ exports.lockAccount = async (req, res) => {
   const userId = req.user.id;
 
   try {
+<<<<<<< HEAD
     const user = await User.findById(userId);
+=======
+    const user = await Customer.findById(userId);
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
 
     if (!user) {
       return res
@@ -662,14 +737,21 @@ exports.adminCreateUser = async (req, res) => {
         .json({ success: false, message: "Email đã tồn tại trong hệ thống!" });
     }
 
+<<<<<<< HEAD
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
+=======
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
     const newUser = await User.create({
       fullName,
       email,
       phone,
+<<<<<<< HEAD
       password: hashedPassword,
+=======
+      password,
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
       role: role || "CUSTOMER",
       status: status || "ACTIVE",
     });
@@ -681,6 +763,7 @@ exports.adminCreateUser = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+<<<<<<< HEAD
 // Cập nhật người dùng từ admin
 exports.updateUser = async (req, res) => {
   try {
@@ -756,3 +839,5 @@ exports.changePassword = async (req, res) => {
     res.status(500).json({ success: false, message: "Lỗi máy chủ khi đổi mật khẩu!" });
   }
 };
+=======
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde

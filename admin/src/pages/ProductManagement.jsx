@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
 import {
+<<<<<<< HEAD
+=======
+  Search,
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
   Plus,
   Trash2,
   X,
@@ -7,6 +11,7 @@ import {
   PlusCircle,
   Package,
   FileText,
+<<<<<<< HEAD
   Edit2,
   ChevronLeft,
   ChevronRight,
@@ -26,11 +31,21 @@ const ProductManagement = () => {
   const [filterCategory, setFilterCategory] = useState("");
   const [sort, setSort] = useState("newest");
   const LIMIT = 12;
+=======
+} from "lucide-react";
+
+const ProductManagement = () => {
+  const [products, setProducts] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
 
   // Khởi tạo form
   const [formData, setFormData] = useState({
     name: "",
+<<<<<<< HEAD
     code: "", // Added code field
+=======
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
     slogan: "",
     category: "o-mai",
     description: "", // Trường mô tả đã có sẵn ở đây
@@ -38,6 +53,7 @@ const ProductManagement = () => {
     images: [],
   });
 
+<<<<<<< HEAD
   const [imageFiles, setImageFiles] = useState([]);
 
   const [categories, setCategories] = useState([]);
@@ -49,11 +65,19 @@ const ProductManagement = () => {
       if (data.success) {
         setCategories(data.categories || data.data || []);
       }
+=======
+  const fetchProducts = async () => {
+    try {
+      const res = await fetch("http://localhost:5175/api/products");
+      const data = await res.json();
+      if (data.success) setProducts(data.products);
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
     } catch (e) {
       console.error(e);
     }
   };
 
+<<<<<<< HEAD
   const fetchProducts = async (page = currentPage, search = searchTerm, categoryId = filterCategory, sortOrder = sort) => {
     try {
       const token = localStorage.getItem("token");
@@ -99,6 +123,11 @@ const ProductManagement = () => {
     fetchProducts(currentPage, searchTerm, filterCategory, sort);
     fetchCategories();
   }, [currentPage, filterCategory, sort]);
+=======
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
 
   // --- XỬ LÝ BIẾN THỂ ---
   const handleAddVariant = () => {
@@ -122,6 +151,7 @@ const ProductManagement = () => {
   // --- XỬ LÝ ẢNH ---
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
+<<<<<<< HEAD
     if (files.length > 0) {
       setImageFiles((prev) => [...prev, ...files]);
       files.forEach((file) => {
@@ -143,10 +173,30 @@ const ProductManagement = () => {
       ...prev,
       images: prev.images.filter((_, i) => i !== index),
     }));
+=======
+    files.forEach((file) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData((prev) => ({
+          ...prev,
+          images: [...prev.images, reader.result],
+        }));
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const removeImage = (index) => {
+    setFormData({
+      ...formData,
+      images: formData.images.filter((_, i) => i !== index),
+    });
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+<<<<<<< HEAD
     if (imageFiles.length === 0 && !isEditMode)
       return alert("Vui lòng thêm ít nhất một ảnh sản phẩm!");
 
@@ -293,6 +343,41 @@ const ProductManagement = () => {
       } else {
         alert(data.message || "Lỗi khi xóa!");
       }
+=======
+    if (formData.images.length === 0)
+      return alert("Vui lòng thêm ít nhất 1 ảnh!");
+
+    try {
+      const res = await fetch("http://localhost:5175/api/products", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      if (res.ok) {
+        alert("Thêm sản phẩm thành công!");
+        setIsModalOpen(false);
+        setFormData({
+          name: "",
+          slogan: "",
+          category: "o-mai",
+          description: "",
+          variants: [{ label: "200g", price: "", stock: 100 }],
+          images: [],
+        });
+        fetchProducts();
+      }
+    } catch (e) {
+      alert("Lỗi khi thêm!");
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm("Xóa sản phẩm này?")) {
+      await fetch(`http://localhost:5175/api/products/${id}`, {
+        method: "DELETE",
+      });
+      fetchProducts();
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
     }
   };
 
@@ -308,6 +393,7 @@ const ProductManagement = () => {
             Cập nhật kho hàng Ô mai Hồng Lam
           </p>
         </div>
+<<<<<<< HEAD
         <div className="flex flex-wrap items-center gap-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
@@ -389,6 +475,16 @@ const ProductManagement = () => {
         </div>
       )}
 
+=======
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="bg-[#9d0b0f] text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 hover:bg-[#f39200] transition-all shadow-lg"
+        >
+          <Plus size={20} /> Thêm sản phẩm mới
+        </button>
+      </div>
+
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
       {/* Grid sản phẩm */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {products.map((p) => {
@@ -417,7 +513,11 @@ const ProductManagement = () => {
                   {p.name}
                 </h3>
                 <p className="text-[#9d0b0f] text-lg font-black mt-2">
+<<<<<<< HEAD
                   Chỉ từ {p.price?.toLocaleString() || 0}đ
+=======
+                  Chỉ từ {p.variants?.[0]?.price?.toLocaleString() || 0}đ
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
                 </p>
                 <div className="mt-4 flex justify-between items-center">
                   <span className="text-[10px] bg-red-50 text-[#9d0b0f] px-2 py-1 rounded-lg font-bold uppercase">
@@ -425,12 +525,15 @@ const ProductManagement = () => {
                   </span>
                   <div className="flex gap-1">
                     <button
+<<<<<<< HEAD
                       onClick={() => handleEdit(p)}
                       className="p-2 bg-blue-50 text-blue-500 rounded-xl hover:bg-blue-500 hover:text-white transition-all"
                     >
                       <Edit2 size={16} />
                     </button>
                     <button
+=======
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
                       onClick={() => handleDelete(p._id)}
                       className="p-2 bg-red-50 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all"
                     >
@@ -444,6 +547,7 @@ const ProductManagement = () => {
         })}
       </div>
 
+<<<<<<< HEAD
       {/* PAGINATION */}
       {pagination.totalPages > 1 && (
         <div className="flex items-center justify-between mt-6 pt-6 border-t border-gray-200">
@@ -495,11 +599,14 @@ const ProductManagement = () => {
         </div>
       )}
 
+=======
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
       {/* MODAL THÊM SẢN PHẨM */}
       {isModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div
             className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+<<<<<<< HEAD
             onClick={handleCloseModal}
           ></div>
           <div className="relative bg-[#f7f4ef] w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-[32px] shadow-2xl border-2 border-[#9d0b0f]">
@@ -508,10 +615,22 @@ const ProductManagement = () => {
                 {isEditMode ? "Cập nhật sản phẩm" : "Thêm sản phẩm mới"}
               </h3>
               <X className="cursor-pointer" onClick={handleCloseModal} />
+=======
+            onClick={() => setIsModalOpen(false)}
+          ></div>
+          <div className="relative bg-[#f7f4ef] w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-[32px] shadow-2xl border-2 border-[#9d0b0f]">
+            <div className="bg-[#9d0b0f] p-6 text-white flex justify-between items-center sticky top-0 z-10">
+              <h3 className="text-xl font-bold uppercase">Thêm sản phẩm mới</h3>
+              <X
+                className="cursor-pointer"
+                onClick={() => setIsModalOpen(false)}
+              />
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
             </div>
 
             <form onSubmit={handleSubmit} className="p-8 space-y-8">
               {/* Thông tin cơ bản */}
+<<<<<<< HEAD
               <div className="space-y-4">
                 <div>
                   <label className="block text-[10px] font-black uppercase text-[#88694f] mb-1.5 ml-1">
@@ -537,10 +656,22 @@ const ProductManagement = () => {
                     type="text"
                     className="w-full bg-[#f7f4ef] border-2 border-stone-200 p-3.5 rounded-2xl outline-none focus:border-[#9d0b0f] transition-all font-bold text-[#3e2714]"
                     placeholder="VD: Ô mai sấu bao tử"
+=======
+              <div className="grid grid-cols-2 gap-6">
+                <div className="col-span-2 md:col-span-1">
+                  <label className="text-xs font-bold text-[#88694f] uppercase block mb-1">
+                    Tên sản phẩm
+                  </label>
+                  <input
+                    required
+                    className="w-full p-3 rounded-xl border outline-none focus:border-[#f39200]"
+                    type="text"
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
                     value={formData.name}
                     onChange={(e) =>
                       setFormData({ ...formData, name: e.target.value })
                     }
+<<<<<<< HEAD
                     required
                   />
                 </div>
@@ -579,6 +710,42 @@ const ProductManagement = () => {
                     />
                   </div>
                 </div>
+=======
+                  />
+                </div>
+                <div className="col-span-2 md:col-span-1">
+                  <label className="text-xs font-bold text-[#88694f] uppercase block mb-1">
+                    Slogan (Hương vị)
+                  </label>
+                  <input
+                    className="w-full p-3 rounded-xl border outline-none focus:border-[#f39200]"
+                    type="text"
+                    placeholder="VD: Chua, cay, ngọt, dẻo"
+                    value={formData.slogan}
+                    onChange={(e) =>
+                      setFormData({ ...formData, slogan: e.target.value })
+                    }
+                  />
+                </div>
+                <div className="col-span-2 md:col-span-1">
+                  <label className="text-xs font-bold text-[#88694f] uppercase block mb-1">
+                    Danh mục
+                  </label>
+                  <select
+                    className="w-full p-3 rounded-xl border outline-none"
+                    value={formData.category}
+                    onChange={(e) =>
+                      setFormData({ ...formData, category: e.target.value })
+                    }
+                  >
+                    <option value="o-mai">Ô mai</option>
+                    <option value="mut-tet">Mứt Tết</option>
+                    <option value="banh-keo">Bánh kẹo</option>
+                    <option value="thuc-uong">Thức uống</option>
+                  </select>
+                </div>
+
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
                 {/* ===== PHẦN MÔ TẢ SẢN PHẨM MỚI THÊM ===== */}
                 <div className="col-span-2">
                   <label className="text-xs font-bold text-[#88694f] uppercase block mb-1 flex items-center gap-1">

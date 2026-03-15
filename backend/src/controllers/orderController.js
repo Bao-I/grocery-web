@@ -1,4 +1,5 @@
 const Order = require("../models/Order");
+<<<<<<< HEAD
 const Promotion = require("../models/Promotion"); // Import model khuyến mãi
 const ghn = require("./ghnController");
 const activityController = require("./activityController");
@@ -31,6 +32,12 @@ exports.createOrder = async (req, res) => {
       userId,
       promoCode,
     } = req.body;
+=======
+
+exports.createOrder = async (req, res) => {
+  try {
+    const { customerInfo, items, totalPrice, paymentMethod, userId } = req.body;
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
 
     if (!items || items.length === 0) {
       return res
@@ -38,6 +45,7 @@ exports.createOrder = async (req, res) => {
         .json({ success: false, message: "Giỏ hàng trống!" });
     }
 
+<<<<<<< HEAD
     // Nếu có mã giảm giá, tăng số lượt đã sử dụng trong DB
     if (promoCode) {
       await Promotion.findOneAndUpdate(
@@ -46,12 +54,15 @@ exports.createOrder = async (req, res) => {
       );
     }
 
+=======
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
     const newOrder = new Order({
       userId,
       customerInfo,
       items,
       totalPrice,
       paymentMethod,
+<<<<<<< HEAD
       promoCode: promoCode || null,
       status: "PENDING", // LUÔN BẮT ĐẦU TỪ PENDING
       trackingHistory: [
@@ -66,11 +77,18 @@ exports.createOrder = async (req, res) => {
     });
 
     await newOrder.save();
+=======
+    });
+
+    await newOrder.save();
+
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
     res.status(201).json({
       success: true,
       message: "Đặt hàng thành công!",
       orderId: newOrder._id,
     });
+<<<<<<< HEAD
 
     // KHÔNG gọi ghn.createGHNOrder ở đây để giữ trạng thái PENDING
   } catch (error) {
@@ -107,11 +125,14 @@ exports.adminConfirm = async (req, res) => {
       message: "Đã xác nhận đơn hàng thành công",
       order,
     });
+=======
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
+<<<<<<< HEAD
 // 3. Admin: Đóng gói sản phẩm
 exports.adminPacking = async (req, res) => {
   try {
@@ -255,6 +276,9 @@ exports.shipperUpdateStatus = async (req, res) => {
 };
 
 // 7. Các hàm khác
+=======
+// Lấy danh sách đơn hàng của một User (Dùng cho trang Account)
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
 exports.getMyOrders = async (req, res) => {
   try {
     const orders = await Order.find({ userId: req.params.userId }).sort({
@@ -266,6 +290,10 @@ exports.getMyOrders = async (req, res) => {
   }
 };
 
+<<<<<<< HEAD
+=======
+// Thêm vào orderController.js
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
 exports.getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find().sort({ createdAt: -1 });
@@ -275,6 +303,7 @@ exports.getAllOrders = async (req, res) => {
   }
 };
 
+<<<<<<< HEAD
 exports.updateOrderStatus = async (req, res) => {
   try {
     const { status } = req.body;
@@ -294,6 +323,13 @@ exports.updateOrderStatus = async (req, res) => {
       );
     }
 
+=======
+// Cập nhật trạng thái đơn hàng (Dùng cho Admin)
+exports.updateOrderStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+    await Order.findByIdAndUpdate(req.params.id, { status });
+>>>>>>> e344a2b8c22a04bee0f22d144f39392d00bd1fde
     res.json({ success: true, message: "Cập nhật trạng thái thành công" });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
